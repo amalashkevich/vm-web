@@ -9,6 +9,7 @@ git clone https://github.com/amalashkevich/vm-web.git
 ### 🛠️ Build with `wasm-pack build`
 
 ```
+cd vm-web
 wasm-pack build
 ```
 
