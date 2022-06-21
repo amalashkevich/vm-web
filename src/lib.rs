@@ -13,7 +13,13 @@ extern {
     fn alert(s: &str);
 }
 
+mod vm_ta;
+use crate::vm_ta::run_machine;
+
+
 #[wasm_bindgen]
-pub fn greet(name: &str) {
-    alert(&format!("Hello, {}!", name));
+pub fn submit_code(byte_code: &str) {
+    let result = run_machine(byte_code);
+    println!("Result={}", result);
+    alert(&format!("Result is {}", result));
 }
