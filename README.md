@@ -12,10 +12,17 @@ git clone https://github.com/amalashkevich/vm-web.git
 wasm-pack build
 ```
 
-### Run test web server
+### Install npm dependencies
 
+```
 cd www
 npm i
-npm run start 
+```
 
-Open `http://localhost:8080`
+### Run test web server
+
+```
+npm run start 
+```
+
+Open `http://localhost:8080` in the browser
