@@ -13,6 +13,12 @@ cd vm-web
 wasm-pack build
 ```
 
+### Run tests
+
+```
+cargo test
+```
+
 ### Install npm dependencies
 
 ```
