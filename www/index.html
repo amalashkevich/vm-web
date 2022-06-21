@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>VM Web</title>
+    <style>
+        .code-holder {
+            width: 400px;
+            margin: 0 auto;
+        }
+
+        #byte-code {
+            width: 400px;
+            height: 350px;
+        }
+
+        .center-text {
+            text-align: center;
+        }
+
+        .center-button {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 30px;
+        }
+    </style>
+</head>
+<body>
+<noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
+<script src="./bootstrap.js"></script>
+<div class="code-holder">
+    <h1 class="center-text">Enter byte code here</h1>
+    <textarea id="byte-code">
+LOAD_VAL 1
+WRITE_VAR "x"
+
+LOAD_VAL 2
+WRITE_VAR "y"
+
+READ_VAR "x"
+LOAD_VAL 1
+ADD
+
+READ_VAR "y"
+MULTIPLY
+
+RETURN_VALUE
+
+    </textarea>
+    <button id="submit-code" class="center-button">Submit</button>
+</div>
+</body>
+</html>
