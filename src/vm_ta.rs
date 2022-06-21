@@ -1,4 +1,9 @@
+use std::fmt;
 use stack_vm::{Instruction, InstructionTable, Machine, Builder, WriteManyTable, Code};
+extern crate console_error_panic_hook;
+use std::panic;
+
+type Result<T> = std::result::Result<T, String>;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Operand {
@@ -39,8 +44,6 @@ impl<'a> From<&'a str> for Operand {
         Operand::S(s.to_string())
     }
 }
-
-use std::fmt;
 
 impl fmt::Display for Operand {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -101,15 +104,15 @@ fn prepare_instruction_table() -> InstructionTable<Operand> {
 }
 
 fn parse_byte_code<'a>(byte_code: &'a str,
-                       instruction_table: &'a InstructionTable<Operand>) -> Builder<'a, Operand> {
+                       instruction_table: &'a InstructionTable<Operand>) -> Result<Builder<'a, Operand>> {
     let mut builder: Builder<Operand> = Builder::new(&instruction_table);
 
     let lines: Vec<&str> = byte_code.split("\n").collect();
     for line in lines.iter() {
-        if line.len() == 0 {
+        if line.trim().len() == 0 {
             continue;
         }
-        let items: Vec<&str> = line.split(" ").collect();
+        let items: Vec<&str> = line.trim().split(" ").collect();
         match items.len() {
             1 => {
                 builder.push(items[0].trim(), vec![]);
@@ -129,19 +132,27 @@ fn parse_byte_code<'a>(byte_code: &'a str,
                 }
             }
             _ => {
-                println!("Unexpected bytecode line ({})", line);
+                return Err(format!("Unexpected bytecode line: {}", line));
             }
         }
     }
-    return builder;
+    return Ok(builder);
 }
 
-pub fn run_machine(byte_code: &str) -> Operand {
+pub fn run_machine(byte_code: &str) -> String {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
     let instruction_table = prepare_instruction_table();
     let constants: WriteManyTable<Operand> = WriteManyTable::new();
-    let builder = parse_byte_code(byte_code, &instruction_table);
-    let mut machine: Machine<Operand> = Machine::new(Code::from(builder), &constants, &instruction_table);
-    machine.run();
-    let result = machine.operand_pop();
-    return result;
+    match parse_byte_code(byte_code, &instruction_table) {
+        Ok(builder) => {
+            let mut machine: Machine<Operand> = Machine::new(Code::from(builder),
+                                                     &constants, &instruction_table);
+            machine.run();
+            let result = machine.operand_pop();
+            return result.to_string();
+        },
+        Err(err) => {
+            return err;
+        }
+    }
 }

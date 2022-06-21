@@ -20,6 +20,6 @@ use crate::vm_ta::run_machine;
 #[wasm_bindgen]
 pub fn submit_code(byte_code: &str) {
     let result = run_machine(byte_code);
-    println!("Result={}", result);
+    println!("Result={:?}", result);
     alert(&format!("Result is {}", result));
 }
