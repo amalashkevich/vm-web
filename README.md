@@ -32,4 +32,4 @@ npm i
 npm run start 
 ```
 
-Open `http://localhost:8080` in the browser
+Open [http://localhost:8080](http://localhost:8080) in the browser
