@@ -56,12 +56,12 @@ mod tests {
     fn test_bytecode2() {
         let byte_code = "
             LOAD_VAL 2
-            WRITE_VAR 'x'
+            WRITE_VAR 'z'
 
             LOAD_VAL 8
             WRITE_VAR 'y'
 
-            READ_VAR 'x'
+            READ_VAR 'z'
             LOAD_VAL 1
             ADD
 

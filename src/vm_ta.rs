@@ -123,7 +123,7 @@ fn pop_jump_if_false(machine: &mut Machine<Operand>, args: &[usize]) {
     }
 }
 
-fn print_(machine: &mut Machine<Operand>, args: &[usize]) {
+fn print_(machine: &mut Machine<Operand>, _args: &[usize]) {
     let val = machine.operand_pop().clone();
 
     print!("{}", val.to_string());
@@ -139,13 +139,13 @@ fn push(machine: &mut Machine<Operand>, args: &[usize]) {
     machine.operand_push(arg);
 }
 
-fn send_channel(machine: &mut Machine<Operand>, args: &[usize]) {
+fn send_channel(machine: &mut Machine<Operand>, _args: &[usize]) {
     let ch = machine.operand_pop().clone();
     let val = machine.operand_pop().clone();
     println!("SEND (ch={}, val={})", ch, val);
 }
 
-fn recv_channel(machine: &mut Machine<Operand>, args: &[usize]) {
+fn recv_channel(machine: &mut Machine<Operand>, _args: &[usize]) {
     let ch = machine.operand_pop().clone();
     println!("RECV (ch={})", ch);
     let val: &str = "recv_channel_value";
@@ -155,7 +155,7 @@ fn recv_channel(machine: &mut Machine<Operand>, args: &[usize]) {
 use std::thread;
 use std::time::Duration;
 
-fn spawn(machine: &mut Machine<Operand>, args: &[usize]) {
+fn spawn(machine: &mut Machine<Operand>, _args: &[usize]) {
     let func1 = machine.operand_pop().clone();
     let func2 = machine.operand_pop().clone();
     println!("SPAWN (func1={}, func2={})", func1, func2);
@@ -261,41 +261,4 @@ pub fn run_machine(byte_code: &str) -> Option<String> {
             return Some(err);
         }
     }
-}
-
-
-pub fn ex_main() {
-    let instruction_table = prepare_instruction_table();
-    let mut builder: Builder<Operand> = Builder::new(&instruction_table);
-
-    builder.push("LOAD_VAL", vec![Operand::from(0)]);
-    builder.push("WRITE_VAR", vec![Operand::from("x")]);
-
-    builder.label(":loop1start");
-    builder.push("READ_VAR", vec![Operand::from("x")]);
-    builder.push("LOAD_VAL", vec![Operand::from(3)]);
-    builder.push("CMP_LT", vec![]);
-    builder.push("POP_JUMP_IF_FALSE", vec![Operand::from(":loop1end")]);
-
-    builder.push("READ_VAR", vec![Operand::from("x")]);
-    builder.push("PRINT", vec![Operand::from("x")]);
-
-    builder.push("READ_VAR", vec![Operand::from("x")]);
-    builder.push("LOAD_VAL", vec![Operand::from(1)]);
-    builder.push("ADD", vec![]);
-    builder.push("WRITE_VAR", vec![Operand::from("x")]);
-
-    builder.push("JUMP", vec![Operand::from(":loop1start")]);
-    builder.label(":loop1end");
-    builder.push("RETURN_VALUE", vec![]);
-
-
-    let constants: WriteManyTable<Operand> = WriteManyTable::new();
-
-    let mut machine: Machine<Operand> = Machine::new(Code::from(builder), &constants, &instruction_table);
-    machine.run();
-
-    let result = machine.operand_pop();
-    print!("Result={}", result);
-    assert_eq!(result, Operand::from(4));
 }
